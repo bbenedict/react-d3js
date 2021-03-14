@@ -1,0 +1,16 @@
+node_modules
+dist
+
+.DS_Store
+npm-debug.log
+
+# Ignore all logfiles and tempfiles.
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Ignore Byebug command history file.
+.byebug_history
+
+.vscode/*
