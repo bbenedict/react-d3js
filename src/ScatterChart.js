@@ -19,11 +19,25 @@ export default function ScatterChart() {
 
   const xData = (d) => d.dewPoint;
   const yData = (d) => d.humidity;
+
   const xScale = d3.scaleLinear().domain(d3.extent(data, xData)).range([0, chartSize.width]).nice();
   const yScale = d3.scaleLinear().domain(d3.extent(data, yData)).range([chartSize.height, 0]).nice();
 
   const xTicks = xScale.ticks(chartSize.width / 25);
   const yTicks = yScale.ticks(chartSize.height / 25);
+
+  const renderCircle = (i, x, y) => {
+    const cx = xScale(x);
+    const cy = yScale(y);
+    return (
+      <circle
+        key={i}
+        cx={cx}
+        cy={cy}
+        r="5"
+      />
+    );
+  };
 
   return (
     <div>
@@ -31,15 +45,10 @@ export default function ScatterChart() {
       <svg width={canvasSize.width} height={canvasSize.height}>
         <g transform={`translate(${margin},0)`}>
           {data.map((d, i) => (
-            <circle
-              key={i}
-              cx={xScale(xData(d))}
-              cy={yScale(yData(d))}
-              r="5"
-            />
+            renderCircle(i, xData(d), yData(d))
           ))}
         </g>
-        <g transform={`translate(0,${chartSize.height})`}>
+        <g transform={`translate(${margin},${chartSize.height})`}>
           <line
             x2={chartSize.width}
             stroke="black"
@@ -48,13 +57,18 @@ export default function ScatterChart() {
             <text
               style={{fontSize: "0.8em"}}
               key={tick}
-              transform={`translate(${xScale(tick)}, 25)`}
+              transform={`translate(${xScale(tick)-10}, 20)`}
             >
               {tick}
             </text>
           ))}
+          <text
+            transform={`translate(${(chartSize.width/2)-10}, 50)`}
+          >
+            Dew point
+          </text>
         </g>
-        <g>
+        <g transform={`translate(${margin},0)`}>
           <line
             y2={chartSize.height}
             stroke="black"
@@ -63,11 +77,16 @@ export default function ScatterChart() {
             <text
               style={{fontSize: "0.8em"}}
               key={tick}
-              transform={`translate(10, ${yScale(tick)})`}
+              transform={`translate(-40, ${yScale(tick)+5})`}
             >
               {tick}
             </text>
           ))}
+          <text
+            transform={`translate(0, 20)`}
+          >
+            Humidity
+          </text>
         </g>
       </svg>
     </div>
