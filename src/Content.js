@@ -8,6 +8,7 @@ import {
 
 import Home from "./Home";
 import ScatterChart from "./ScatterChart";
+import BarChart from "./BarChart";
 
 export default function Content() {
   return (
@@ -23,6 +24,7 @@ export default function Content() {
           }}>
           <Link to="/" style={{ color: "white", textDecoration: "none" }}>Home page</Link>
           <Link to="/scatterchart" style={{ color: "white", textDecoration: "none" }}>Scatter chart</Link>
+          <Link to="/barchart" style={{ color: "white", textDecoration: "none" }}>Bar chart</Link>
         </div>
         <div id="main" role="main" aria-label="Primary Content"
           style={{ padding: "1em" }}
@@ -30,6 +32,9 @@ export default function Content() {
           <Switch>
             <Route path="/scatterchart">
               <ScatterChart />
+            </Route>
+            <Route path="/barchart">
+              <BarChart />
             </Route>
             <Route path="/">
               <Home />
