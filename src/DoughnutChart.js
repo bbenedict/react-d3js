@@ -82,8 +82,7 @@ export default function DoughnutChart() {
         </svg>
       </div>
       <div style={{width: "350px", textAlign: "center"}}>
-        Your organization ranks in the second quartile of companies for Ethics
-        according to our benchmark data.
+        Your group is 45% complete with the task.
       </div>
     </>
   );
