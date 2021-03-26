@@ -1,8 +1,10 @@
-import React from "react";
-import { pie, arc } from "d3";
+import React, { useRef, useEffect } from "react";
+import { select, pie, arc } from "d3";
 
 // Single value doughnut chart
 export default function DoughnutChart() {
+  const chartRef = useRef();
+
   const size = 300;
   const margin = 20;
 
@@ -32,54 +34,38 @@ export default function DoughnutChart() {
     }
   ];
 
-  const sliceGenerator = pie().padAngle(0.005).value(d => d.value).sort((a,b) => (a.position - b.position)).startAngle(0);
-  const pieSlices = sliceGenerator(pieData);
+  useEffect(() => {
+    const chartSVG = select(chartRef.current);
 
-  const radius = chartSize.width / 2;
-  const arcSVGData = arc().innerRadius(radius * 0.65).outerRadius(radius);
+    const chart = chartSVG.append("g")
+      .style("transform",`translate(${margin},${margin})`);
 
-  const pieValue = (label) => {
-    const shift = -Math.ceil((label.length / 2) * 25);
-    return (
-      <text
-        key="pielabel"
-        transform={`translate(${shift},15)`}
-        fontSize="48px"
-        fontWeight="bold"
-        fill="#E38C34"
-      >
-        {label}
-      </text>
-    );
-  };
+    const sliceGenerator = pie().padAngle(0.005).value(d => d.value).sort((a,b) => (a.position - b.position)).startAngle(0);
+    const pieSlices = sliceGenerator(pieData);
+  
+    const radius = chartSize.width / 2;
+    const arcSVGData = arc().innerRadius(radius * 0.65).outerRadius(radius);
+
+    const primaryGroup = chart.append("g").attr("transform",`translate(${chartSize.height / 2}, ${chartSize.width / 2})`);
+    primaryGroup.append("path")
+      .attr("fill","#E38C34")
+      .attr("d",arcSVGData(pieSlices[0]));
+    primaryGroup.append("text")
+      .text(pieSlices[0].data.value.toString())
+      .attr("fill","black")
+      .attr("font-size","48px")
+      .attr("font-weight","bold")
+      .attr("transform",`translate(${-Math.ceil((pieSlices[0].data.value.toString().length / 2) * 25)},15)`);
+
+    const secondaryGroup = chart.append("g").attr("transform",`translate(${chartSize.height / 2}, ${chartSize.width / 2})`);
+    secondaryGroup.append("path").attr("fill","lightgray").attr("d",arcSVGData(pieSlices[1]));
+  }, []);
 
   return (
     <>
       <div>
         <h1 style={{padding: "0 0 50px 0"}}>Doughnut chart example</h1>
-        <svg width={canvasSize.width} height={canvasSize.height}>
-          <g transform={`translate(${margin},0)`}>
-            <g transform={`translate(${chartSize.height / 2}, ${chartSize.width / 2})`}>
-              <g key="primarygroup">
-                <path
-                  key="primaryslice"
-                  fill="#E38C34"
-                  d={arcSVGData(pieSlices[0])}
-                />
-                { pieValue(pieSlices[0].data.value.toString()) }
-              </g>
-            </g>
-            <g transform={`translate(${chartSize.height / 2}, ${chartSize.width / 2})`}>
-              <g key="secondarygroup">
-                <path
-                  key="secondaryslice"
-                  fill="#EEEE"
-                  d={arcSVGData(pieSlices[1])}
-                />
-              </g>
-            </g>
-          </g>
-        </svg>
+        <svg ref={chartRef} width={canvasSize.width} height={canvasSize.height} />
       </div>
       <div style={{width: "350px", textAlign: "center"}}>
         Your group is 45% complete with the task.
